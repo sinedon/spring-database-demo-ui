@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="navbar.css">
+    <link rel="stylesheet" href="general.css">
+    <title>Add to Basket</title>
+</head>
+<body>
+    <ul class="topnav">
+        <li><a class="active" href="index.html">Home</a></li>
+        <li><a href="add.html">Add a flower</a></li>        
+        <li><a href="order.html">Order a flower</a></li>
+        <li><a href="flowers.html">All Flowers</a></li>
+        <li class="right"><a  href="login.html">Login</a></li>
+    </ul>
+    
+    <!-- Add selectedFlowerContainer div here -->
+    <div id="selectedFlowerContainer"></div>
+
+    <label for="deliveryDate">Delivery Date:</label>
+    <input type="date" id="deliveryDate" required>
+
+    <label>Purchase Option:</label>
+    <div class="purchase-options">
+        <label class="purchase-option">
+            <input type="radio" name="purchaseOption" value="oneTimePurchase" checked>
+            One Time Purchase ($<span id="oneTimePrice"></span>)
+            <span class="checkmark"></span>
+        </label>
+        <label class="purchase-option">
+            <input type="radio" name="purchaseOption" value="subscription">
+            Start a Subscription (30% Discount - $<span id="subscriptionPrice"></span>)
+            <span class="checkmark"></span>
+        </label>
+    </div>
+
+    <button onclick="addToBasket()">Add to Basket</button>
+
+    <script src="configuration.js"></script>
+    <script>
+        let host = getHost();
+        let basket = JSON.parse(localStorage.getItem("basket")) || [];
+    
+        let selectedFlower = basket.length > 0 ? basket[0] : null;
+
+        if (selectedFlower) {
+            const selectedFlowerContainer = document.getElementById("selectedFlowerContainer");
+            selectedFlowerContainer.innerHTML = `
+                <h3>${selectedFlower.name}</h3>
+                <img src="${host}/flowers/${selectedFlower.id}/image" alt="${selectedFlower.name}">
+            `;
+        }
+
+        document.getElementById("oneTimePrice").textContent = selectedFlower.cost.toFixed(2);
+        document.getElementById("subscriptionPrice").textContent = (selectedFlower.cost * 0.7).toFixed(2); 
+
+        function addToBasket() {
+            let deliveryDate = document.getElementById("deliveryDate").value;
+            let purchaseOption = document.querySelector('input[name="purchaseOption"]:checked').value;
+
+            if (!deliveryDate || !purchaseOption) {
+                alert("Please provide delivery date and select a purchase option.");
+                return;
+            }
+
+            let cost = selectedFlower.cost;
+            if (purchaseOption === "subscription") {
+                cost *= 0.7; 
+            }
+
+            let basketItem = {
+                flowerId: selectedFlower.id,
+                flowerName: selectedFlower.name,
+                deliveryDate: deliveryDate,
+                purchaseOption: purchaseOption,
+                cost: cost 
+            };
+
+            let basket = JSON.parse(localStorage.getItem("basket")) || [];
+            basket.push(basketItem);
+            localStorage.setItem("basket", JSON.stringify(basket));
+
+            window.location.href = "order.html";
+        }
+    </script>
+</body>
+</html>

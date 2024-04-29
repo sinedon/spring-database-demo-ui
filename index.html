@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="navbar.css">
+    <link rel="stylesheet" href="general.css">
+    <title>Flowers Application Home Page</title>
+</head>
+<body>
+    <ul class="topnav">
+        <li><a class="active" href="index.html">Home</a></li>
+        <li><a href="add.html">Add a flower</a></li>        
+        <li><a href="order.html">Order a flower</a></li>
+        <li><a href="flowers.html">All Flowers</a></li>
+        <li class="right"><a  href="login.html">Login</a></li>
+    </ul>
+
+    <div class="filters">
+        <label for="flowerType">Flower Type:</label>
+        <select id="flowerType">
+            <option value="">All</option>
+            <option value="MIXED">Mixed</option>
+            <option value="ROSES">Roses</option>
+            <option value="LILIES">Lilies</option>
+            <option value="TULIPS">Tulips</option>
+            <option value="DAISIES">Daisies</option>
+        </select>
+
+        <label for="occasion">Occasion:</label>
+        <select id="occasion">
+            <option value="">All</option>
+            <option value="MOTHERS_DAY">Mother's Day</option>
+            <option value="BIRTHDAY">Birthday</option>
+            <option value="THANK_YOU">Thank You</option>
+        </select>
+
+        <label for="color">Color:</label>
+        <select id="color">
+            <option value="">All</option>
+            <option value="MIXED">Mixed</option>
+            <option value="RED">Red</option>
+            <option value="YELLOW">Yellow</option>
+            <option value="GREEN">Green</option>
+            <option value="ORANGE">Orange</option>
+        </select>
+
+        <label for="sortBy">Sort By:</label>
+        <select id="sortBy">
+            <option value="ASC">Price: Low to High</option>
+            <option value="DESC">Price: High to Low</option>
+        </select>
+        
+        <button onclick="applyFilters()">Apply Filters</button>
+    </div>
+
+    <div class="flower-container" id="flowerList"></div>
+
+    <script src="configuration.js"></script>
+    <script>
+        let host = getHost();
+        emptyBasket();
+        let flowers = [];
+        displayAllFlowers();
+
+        async function getAllFlowers() {
+            //const headers = { "Authorization": `Bearer ${configuration.token()}` }
+            let response = await fetch(host + "/flowers");
+            if (response.status == 401) {
+                logout();
+            }
+            let result = await response.json();
+            return result;
+        }
+
+        async function displayFlowers(flowerData) {
+            const flowerList = document.getElementById("flowerList");
+            flowerList.innerHTML = "";
+
+            flowerData.forEach(flower => {
+                const div = document.createElement("div");
+                div.className = "flower-card";
+                div.innerHTML = `
+                    <h3>${flower.name}</h3>
+                    <p>Cost: $${flower.cost.toFixed(2)}</p>
+                    <img src="${host}/flowers/${flower.id}/image" alt="${flower.name}">
+                    <button onclick="addToBasket(${flower.id})">Add to Basket</button>
+                `;
+                flowerList.appendChild(div);
+            });
+        }
+
+        async function displayAllFlowers() {
+            if (flowers.length == 0) {
+                flowers = await getAllFlowers();
+            }
+
+            displayFlowers(flowers);
+        }
+
+        function applyFilters() {
+            let filteredFlowers = flowers.filter(flower => {
+                let type = document.getElementById("flowerType").value;
+                let occasion = document.getElementById("occasion").value;
+                let color = document.getElementById("color").value;
+
+                if (type && flower.type !== type) {
+                    return false;
+                }
+                if (occasion && flower.occasion !== occasion) {
+                    return false;
+                }
+                if (color && flower.color !== color) {
+                    return false;
+                }
+                return true;
+            });
+
+            let sortBy = document.getElementById("sortBy").value;
+            if (sortBy === "ASC") {
+                filteredFlowers.sort((a, b) => a.cost - b.cost);
+            } else if (sortBy === "DESC") {
+                filteredFlowers.sort((a, b) => b.cost - a.cost);
+            }
+
+            displayFlowers(filteredFlowers);
+        }
+    </script>
+</body>
+</html>

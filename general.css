@@ -1,0 +1,41 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 2%;
+  }
+  form {
+    max-width: 61.8%;
+    margin: 2%;
+  }
+  img {
+    max-width: auto;
+    height: auto;
+    border-radius: 5px 5px 0 0;
+  }
+  
+  .container {
+    padding: 2px 16px;
+  }
+
+  button {
+    margin: 10px;
+  }
+
+.flower-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.flower-card {
+    width: calc(30% - 20px); /* Set the width of each card to one-third of the container width with some margin */
+    margin-bottom: 20px; /* Add some bottom margin to create space between rows */
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+}
+
+.flower-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px 5px 0 0;
+}
