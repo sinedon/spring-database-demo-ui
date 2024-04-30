@@ -23,19 +23,33 @@ body {
 .flower-container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: center;
 }
 
 .flower-card {
-    width: calc(30% - 20px); /* Set the width of each card to one-third of the container width with some margin */
-    margin-bottom: 20px; /* Add some bottom margin to create space between rows */
+    width: calc(30% - 20px); 
+    height: 400px;
+    margin-right: 10px;
+    margin-bottom: 10px; 
     border: 1px solid #ccc;
-    padding: 10px;
+    padding: 20px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
 }
 
 .flower-card img {
     width: 100%;
-    height: auto;
+    height: 60%;
+    object-fit: cover;
     border-radius: 5px 5px 0 0;
+}
+
+.text-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 10px; 
+}
+
+.text-container label {
+  margin-right: 10px; 
 }

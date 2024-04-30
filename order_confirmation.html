@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="navbar.css">
+    <link rel="stylesheet" href="general.css">
+    <title>Order Confirmation</title>
+</head>
+<body>
+    <ul class="topnav">
+        <li><a class="active" href="index.html">Home</a></li>
+        <li><a href="orderList.html">Your Orders</a></li>
+        <li class="right"><a href="order_confirmation.html">Cart: <span id="cartItemCount">0</span></a></li>
+        <li class="right"><a  href="login.html">Login</a></li>
+    </ul>
+    <h1>Order Confirmation</h1>
+
+    <div id="orderSummary">
+    </div>
+
+    <button onclick="placeOrder()">Place Order</button>
+
+    <script src="configuration.js"></script>
+    <script>
+        let host = getHost();
+        let basket = JSON.parse(localStorage.getItem("basket")) || [];
+        let basketItem = JSON.parse(localStorage.getItem("basketItem")) || {};
+        let delivery = JSON.parse(localStorage.getItem("deliveryInfo")) || {};
+        let deliveryPrice = 25;
+
+        let orderSummary = document.getElementById("orderSummary");
+        let totalCost = basketItem.cost;
+
+        orderSummary.innerHTML += `
+                <h3>${basket[0].name}</h3>
+                <img src="${host}/flowers/${basket[0].id}/image" alt="${basket[0].name}">
+            `;
+
+        if (isLoggedIn()) {
+            deliveryPrice -=10;
+        }
+
+        orderSummary.innerHTML += `
+            <h3>Delivery Date</h3>
+            <p>${basketItem.deliveryDate}</p>
+            <h3>Item Pricing</h3>
+            <p>$${basketItem.cost.toFixed(2)}</p>
+            <h3>Delivery Address</h3>
+            <p>${delivery.recipientFirstName} ${delivery.recipientLastName}</p>
+            <p>${delivery.aptSuite} ${delivery.address}</p>
+            <p>${delivery.city} ${delivery.state} ${delivery.zipCode}</p>
+
+            <h3>Subtotal</h3>
+            <p>Delivery: $25.00</p>
+            <p>Delivery Discount: -$${(25 - deliveryPrice).toFixed(2)}</p>
+            <p>Tax: $0.00</p>
+            <p>Order Total: $${(totalCost + deliveryPrice).toFixed(2)}</p>
+        `;
+
+        async function placeOrder() {
+            try {
+                let orderData = {
+                    flowerId: basket[0].id, 
+                    flowerName: basket[0].name,
+                    recipientName: `${delivery.recipientFirstName} ${delivery.recipientLastName}`,
+                    totalCost: parseFloat((totalCost + deliveryPrice).toFixed(2)),
+                    status: "SUBMITTED",
+                    customerUserName: null // This will be set by the server
+                };
+
+                console.log(orderData);
+
+                let request = {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${configuration.token()}`
+                    },
+                    body: JSON.stringify(orderData)
+                };
+
+                let response = await fetch(`${host}/orders`, request);
+
+                if (response.ok) {
+                    alert("Order placed successfully!");
+                    localStorage.removeItem("basket");
+                    localStorage.removeItem("delivery");
+                    window.location.href = "orderList.html";
+                } else {
+                    throw new Error("Failed to place order");
+                }
+            } catch (error) {
+                console.error("An error occurred while placing the order:", error);
+                alert("An error occurred. Please try again.");
+            }
+        }
+    </script>
+</body>
+</html>

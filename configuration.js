@@ -36,6 +36,12 @@ let configuration = {
 };
 
 updateTheNavigationBar();
+updateCartItemCount();
+
+async function updateCartItemCount() {
+    let basket = JSON.parse(localStorage.getItem("basket")) || [];
+    document.getElementById("cartItemCount").textContent = basket.length;
+}
 
 async function updateTheNavigationBar() {
     const navigation = document.getElementsByClassName("topnav")[0];

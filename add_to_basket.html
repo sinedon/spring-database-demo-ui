@@ -5,38 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="navbar.css">
     <link rel="stylesheet" href="general.css">
+    <link rel="stylesheet" href="wrapper.css"> 
     <title>Add to Basket</title>
 </head>
 <body>
     <ul class="topnav">
         <li><a class="active" href="index.html">Home</a></li>
-        <li><a href="add.html">Add a flower</a></li>        
-        <li><a href="order.html">Order a flower</a></li>
-        <li><a href="flowers.html">All Flowers</a></li>
+        <li><a href="orderList.html">Your Orders</a></li>
+        <li class="right"><a href="order_confirmation.html">Cart: <span id="cartItemCount">0</span></a></li>
         <li class="right"><a  href="login.html">Login</a></li>
     </ul>
-    
-    <!-- Add selectedFlowerContainer div here -->
-    <div id="selectedFlowerContainer"></div>
 
-    <label for="deliveryDate">Delivery Date:</label>
-    <input type="date" id="deliveryDate" required>
-
-    <label>Purchase Option:</label>
-    <div class="purchase-options">
-        <label class="purchase-option">
-            <input type="radio" name="purchaseOption" value="oneTimePurchase" checked>
-            One Time Purchase ($<span id="oneTimePrice"></span>)
-            <span class="checkmark"></span>
-        </label>
-        <label class="purchase-option">
-            <input type="radio" name="purchaseOption" value="subscription">
-            Start a Subscription (30% Discount - $<span id="subscriptionPrice"></span>)
-            <span class="checkmark"></span>
-        </label>
+    <div id="wrapper">
+        <div id="c1">
+            <div id="selectedFlowerContainer" class="flower-card"></div>
+        </div>
+        <div id="c2">
+            <label for="deliveryDate">Delivery Date:
+                <input type="date" id="deliveryDate" required>
+            </label>
+            <label>Purchase Option:</label>
+            <div class="purchase-options">
+                <label class="purchase-option">
+                <input type="radio" name="purchaseOption" value="oneTimePurchase" checked>
+                One Time Purchase ($<span id="oneTimePrice"></span>)
+                <span class="checkmark"></span>
+                </label>
+                <label class="purchase-option">
+                    <input type="radio" name="purchaseOption" value="subscription">
+                    Start a Subscription (30% Discount - $<span id="subscriptionPrice"></span>)
+                    <span class="checkmark"></span>
+                </label>
+            </div>
+            <button onclick="addToBasket()">Add to Basket</button>
+        </div>
     </div>
-
-    <button onclick="addToBasket()">Add to Basket</button>
 
     <script src="configuration.js"></script>
     <script>
@@ -78,11 +81,9 @@
                 cost: cost 
             };
 
-            let basket = JSON.parse(localStorage.getItem("basket")) || [];
-            basket.push(basketItem);
-            localStorage.setItem("basket", JSON.stringify(basket));
+            localStorage.setItem("basketItem", JSON.stringify(basketItem));
 
-            window.location.href = "order.html";
+            window.location.href = "delivery.html";
         }
     </script>
 </body>
