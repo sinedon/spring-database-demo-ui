@@ -1,4 +1,4 @@
-const mode = 1;
+const mode = 0;
 
 const host_local = "http://localhost:8080";
 const host_remote = "https://finalproject-latest.onrender.com";
@@ -102,7 +102,6 @@ async function login() {
             alert("The login was successful!");
             const token = await response.text();
             saveTheToken(token);            
-            location.href = "index.html";
         } else {
             console.log(`response status:${response.status}`);   
             removeTheToken();         

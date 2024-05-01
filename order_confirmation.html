@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="navbar.css">
     <link rel="stylesheet" href="general.css">
+    <link rel="stylesheet" href="wrapper3.css">
     <title>Order Confirmation</title>
 </head>
 <body>
@@ -16,10 +17,19 @@
     </ul>
     <h1>Order Confirmation</h1>
 
-    <div id="orderSummary">
+    <div id="wrapper">
+        <div id="c1">
+            <div id="selectedFlowerContainer" class="flower-card"></div>
+            <div id="button-container">
+                <button onclick="placeOrder()">Place Order</button>
+            </div>
+        </div>
+        <div id="c2">
+            <h2>Order Summary</h2>
+            <div id="orderSummary">
+            </div>
+        </div>
     </div>
-
-    <button onclick="placeOrder()">Place Order</button>
 
     <script src="configuration.js"></script>
     <script>
@@ -32,10 +42,15 @@
         let orderSummary = document.getElementById("orderSummary");
         let totalCost = basketItem.cost;
 
-        orderSummary.innerHTML += `
-                <h3>${basket[0].name}</h3>
-                <img src="${host}/flowers/${basket[0].id}/image" alt="${basket[0].name}">
+        let selectedFlower = basket.length > 0 ? basket[0] : null;
+
+        if (selectedFlower) {
+            const selectedFlowerContainer = document.getElementById("selectedFlowerContainer");
+            selectedFlowerContainer.innerHTML = `
+                <h3>${selectedFlower.name}</h3>
+                <img src="${host}/flowers/${selectedFlower.id}/image" alt="${selectedFlower.name}">
             `;
+        }
 
         if (isLoggedIn()) {
             deliveryPrice -=10;
@@ -88,11 +103,16 @@
                     localStorage.removeItem("delivery");
                     window.location.href = "orderList.html";
                 } else {
+                    window.location.href = "login.html";
                     throw new Error("Failed to place order");
                 }
             } catch (error) {
                 console.error("An error occurred while placing the order:", error);
-                alert("An error occurred. Please try again.");
+                if (isLoggedIn()) {
+                    alert("An error occurred while placing the order. Please try again.");
+                } else {
+                    alert("Please login to place an order.");
+                }
             }
         }
     </script>
